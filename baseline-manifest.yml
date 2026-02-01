@@ -1,0 +1,132 @@
+# Evidence policy:
+# - Evidence maturity is tracked in STATUS.md (Captured / Partial / Planned).
+# - Placeholders may be used to keep the structure reviewable while captures are planned.
+# - Any captured evidence is sanitized to exclude tenant identifiers (UPNs, object IDs, domains, serials).
+
+baseline:
+  name: "Microsoft 365 Platform Administration – Ops Playbooks (Portfolio)"
+  environment:
+    tenant_scope: Microsoft 365 lab/sandbox tenant
+    platform_scope:
+      in_scope:
+        - Exchange Online (mail flow, permissions, investigations)
+        - Microsoft Teams (policies, troubleshooting)
+        - SharePoint Online / OneDrive (permissions, sharing governance)
+        - Microsoft Purview (retention/DLP/labels/audit as implemented)
+        - Microsoft Defender for Office 365 (safe links/attachments, anti-phish triage)
+        - ITIL-style operations (incident / request / change)
+      out_of_scope:
+        - Hybrid/AD synchronization deep-dive (intentionally excluded)
+        - Deep Intune engineering baseline (covered in separate repository)
+        - Third-party backup tools unless explicitly added
+  rings:
+    - id: R0
+      name: R0 - Guardrails & Safety
+      description: Safety notes, least-privilege, rollback discipline, and non-disruptive defaults
+    - id: R1
+      name: R1 - Pilot
+      description: Small pilot scope for validation and controlled change
+    - id: R2
+      name: R2 - Broad
+      description: Wider rollout / standard operations
+    - id: R3
+      name: R3 - Critical
+      description: High-impact users/services; slowest change cadence and strict approvals
+
+objects:
+  - id: NAV-001
+    type: Repository entry point
+    name: "START-HERE – single navigation page"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence: []
+
+  - id: ITIL-001
+    type: ITIL template
+    name: "Incident template"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 07-operations-itil/incident-template.md
+
+  - id: ITIL-002
+    type: ITIL template
+    name: "Change template"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 07-operations-itil/change-template.md
+
+  - id: ITIL-003
+    type: ITIL template
+    name: "Service request template"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 07-operations-itil/service-request-template.md
+
+  - id: EXO-RB-001
+    type: Operational runbook (Exchange Online)
+    name: "Mail flow troubleshooting (Message trace)"
+    ring: R1
+    owner: Messaging
+    assignments:
+      include:
+        - Exchange Online workload
+      exclude: []
+    dependencies:
+      - ITIL-001 (Incident template)
+      - R0 guardrails
+    evidence:
+      - 02-exchange-online/runbooks/mail-flow-troubleshooting.md
+      # - 99-evidence/exchange-online/<YYYY-MM-DD>_message-trace.png
+      # - 99-evidence/exchange-online/<YYYY-MM-DD>_quarantine-review.png
+
+  - id: TEAMS-RB-001
+    type: Operational runbook (Microsoft Teams)
+    name: "Policy not applying (user-level)"
+    ring: R1
+    owner: Collaboration
+    assignments:
+      include:
+        - Microsoft Teams workload
+      exclude: []
+    dependencies:
+      - ITIL-001 (Incident template)
+      - R0 guardrails
+    evidence:
+      - 03-microsoft-teams/runbooks/policy-not-applying.md
+      # - 99-evidence/microsoft-teams/<YYYY-MM-DD>_user-policies.png
+
+  - id: SPOOD-RB-001
+    type: Operational runbook (SharePoint/OneDrive)
+    name: "External sharing review (governance)"
+    ring: R1
+    owner: Collaboration
+    assignments:
+      include:
+        - SharePoint Online / OneDrive workload
+      exclude: []
+    dependencies:
+      - ITIL-002 (Change template)
+      - R0 guardrails
+    evidence:
+      - 04-sharepoint-onedrive/runbooks/external-sharing-review.md
+      # - 99-evidence/sharepoint-onedrive/<YYYY-MM-DD>_tenant-sharing-settings.png
+      # - 99-evidence/sharepoint-onedrive/<YYYY-MM-DD>_site-sharing-settings.png

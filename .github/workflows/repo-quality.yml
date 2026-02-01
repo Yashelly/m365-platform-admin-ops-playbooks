@@ -1,0 +1,41 @@
+name: Repo Quality
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run repo consistency checks
+        run: |
+          python tools/check_repo_consistency.py
+
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install markdownlint
+        run: |
+          npm install -g markdownlint-cli
+
+      - name: Lint Markdown
+        run: |
+          markdownlint "**/*.md" --ignore "node_modules/**" --ignore ".git/**"
