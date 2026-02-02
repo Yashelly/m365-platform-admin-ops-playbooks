@@ -6,7 +6,7 @@ This repository documents operations-first administration of Microsoft 365 servi
 Focus: incident/request/change handling, governance, secure configuration baselines, and repeatable runbooks.
 
 ## What you’ll find here
-- Service runbooks (triage → investigation → fix → validation → rollback)
+- Service runbooks (triage -> investigation -> fix -> validation -> rollback)
 - Practical baselines and checks (what to verify, where, and why)
 - Security & compliance workflows (Purview + mail security)
 - ITIL-aligned operational templates (incident/change/request)

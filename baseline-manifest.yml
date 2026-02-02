@@ -4,21 +4,23 @@
 # - Any captured evidence is sanitized to exclude tenant identifiers (UPNs, object IDs, domains, serials).
 
 baseline:
-  name: "Microsoft 365 Platform Administration – Ops Playbooks (Portfolio)"
+  name: "Microsoft 365 Platform Administration - Ops Playbooks (Portfolio)"
   environment:
     tenant_scope: Microsoft 365 lab/sandbox tenant
     platform_scope:
       in_scope:
         - Exchange Online (mail flow, permissions, investigations)
-        - Microsoft Teams (policies, troubleshooting)
+        - Microsoft Teams (policies, troubleshooting, governance)
         - SharePoint Online / OneDrive (permissions, sharing governance)
-        - Microsoft Purview (retention/DLP/labels/audit as implemented)
-        - Microsoft Defender for Office 365 (safe links/attachments, anti-phish triage)
+        - Microsoft Purview (audit workflows as implemented)
+        - Microsoft Defender for Office 365 (email security triage)
         - ITIL-style operations (incident / request / change)
       out_of_scope:
         - Hybrid/AD synchronization deep-dive (intentionally excluded)
+        - Identity & access deep-dive (Entra ID / Conditional Access)
         - Deep Intune engineering baseline (covered in separate repository)
         - Third-party backup tools unless explicitly added
+
   rings:
     - id: R0
       name: R0 - Guardrails & Safety
@@ -34,17 +36,109 @@ baseline:
       description: High-impact users/services; slowest change cadence and strict approvals
 
 objects:
+  # ----------------------------
+  # Repository navigation / overview
+  # ----------------------------
   - id: NAV-001
     type: Repository entry point
-    name: "START-HERE – single navigation page"
+    name: "START-HERE - single navigation page"
     ring: R0
     owner: M365 Operations
     assignments:
       include: []
       exclude: []
     dependencies: []
-    evidence: []
+    evidence:
+      - START-HERE.md
 
+  - id: OVR-001
+    type: Overview documentation
+    name: "Scope"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 00-overview/scope.md
+
+  - id: OVR-002
+    type: Overview documentation
+    name: "Operating model"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 00-overview/operating-model.md
+
+  - id: OVR-003
+    type: Overview documentation
+    name: "Environments"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 00-overview/environments.md
+
+  - id: OVR-004
+    type: Overview documentation
+    name: "Navigation map"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 00-overview/navigation.md
+
+  - id: EVD-001
+    type: Evidence policy
+    name: "Evidence rules and sanitization"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 99-evidence/README.md
+
+  - id: INV-001
+    type: Baseline manifest
+    name: "Inventory of runbooks, checks, and evidence pointers"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - baseline-manifest.yml
+
+  - id: QG-001
+    type: Quality gate
+    name: "Repo consistency checker (internal links/images)"
+    ring: R0
+    owner: M365 Operations
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - tools/check_repo_consistency.py
+      - .github/workflows/repo-quality.yml
+
+  # ----------------------------
+  # Operations (ITIL templates)
+  # ----------------------------
   - id: ITIL-001
     type: ITIL template
     name: "Incident template"
@@ -81,6 +175,9 @@ objects:
     evidence:
       - 07-operations-itil/service-request-template.md
 
+  # ----------------------------
+  # Exchange Online
+  # ----------------------------
   - id: EXO-RB-001
     type: Operational runbook (Exchange Online)
     name: "Mail flow troubleshooting (Message trace)"
@@ -95,9 +192,44 @@ objects:
       - R0 guardrails
     evidence:
       - 02-exchange-online/runbooks/mail-flow-troubleshooting.md
-      # - 99-evidence/exchange-online/<YYYY-MM-DD>_message-trace.png
-      # - 99-evidence/exchange-online/<YYYY-MM-DD>_quarantine-review.png
+      - 02-exchange-online/cases/exo-tr-001-block-subject-marker.md
+      - 99-evidence/exchange-online/2026-02-01_rule_block_subject_overview.png
+      - 99-evidence/exchange-online/2026-02-01_message-trace_blocked_details.png
+      - 99-evidence/exchange-online/2026-02-01_message-trace_delivered_details.png
 
+
+  - id: EXO-TR-001
+    type: Validated scenario (Exchange Online)
+    name: "Transport rule blocks subject marker `[LAB-BLOCK]`"
+    ring: R1
+    owner: Messaging
+    assignments:
+      include:
+        - Exchange Online workload
+      exclude: []
+    dependencies:
+      - EXO-RB-001 (Runbook)
+      - ITIL-002 (Change template)
+    evidence:
+      - 02-exchange-online/cases/exo-tr-001-block-subject-marker.md
+      - 99-evidence/exchange-online/2026-02-01_rule_block_subject_overview.png
+      - 99-evidence/exchange-online/2026-02-01_message-trace_blocked_details.png
+      - 99-evidence/exchange-online/2026-02-01_message-trace_delivered_details.png
+  - id: EXO-CHK-001
+    type: Baseline checks (Exchange Online)
+    name: "Operational checks"
+    ring: R0
+    owner: Messaging
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 02-exchange-online/configuration/checks.md
+
+  # ----------------------------
+  # Microsoft Teams
+  # ----------------------------
   - id: TEAMS-RB-001
     type: Operational runbook (Microsoft Teams)
     name: "Policy not applying (user-level)"
@@ -114,6 +246,21 @@ objects:
       - 03-microsoft-teams/runbooks/policy-not-applying.md
       # - 99-evidence/microsoft-teams/<YYYY-MM-DD>_user-policies.png
 
+  - id: TEAMS-CHK-001
+    type: Baseline checks (Microsoft Teams)
+    name: "Operational checks"
+    ring: R0
+    owner: Collaboration
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 03-microsoft-teams/governance/checks.md
+
+  # ----------------------------
+  # SharePoint Online / OneDrive
+  # ----------------------------
   - id: SPOOD-RB-001
     type: Operational runbook (SharePoint/OneDrive)
     name: "External sharing review (governance)"
@@ -130,3 +277,125 @@ objects:
       - 04-sharepoint-onedrive/runbooks/external-sharing-review.md
       # - 99-evidence/sharepoint-onedrive/<YYYY-MM-DD>_tenant-sharing-settings.png
       # - 99-evidence/sharepoint-onedrive/<YYYY-MM-DD>_site-sharing-settings.png
+      # - 99-evidence/sharepoint-onedrive/<YYYY-MM-DD>_audit-findings.png
+
+  - id: SPOOD-CHK-001
+    type: Baseline checks (SharePoint Online / OneDrive)
+    name: "Operational checks"
+    ring: R0
+    owner: Collaboration
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 04-sharepoint-onedrive/governance/checks.md
+
+  # ----------------------------
+  # Microsoft Purview (Audit)
+  # ----------------------------
+  - id: PUR-RB-001
+    type: Operational runbook (Purview)
+    name: "Audit search runbook (incident + governance)"
+    ring: R1
+    owner: Compliance
+    assignments:
+      include:
+        - Microsoft Purview workload
+      exclude: []
+    dependencies:
+      - ITIL-001 (Incident template)
+      - R0 guardrails
+    evidence:
+      - 05-security-compliance-purview/auditing/audit-search-runbook.md
+      # - 99-evidence/purview/<YYYY-MM-DD>_audit-filters.png
+      # - 99-evidence/purview/<YYYY-MM-DD>_audit-results.png
+      # - 99-evidence/purview/<YYYY-MM-DD>_audit-export.csv
+
+
+  - id: PUR-AUD-001
+    type: Validated scenario (Purview)
+    name: "Audit search example (OneDrive file activity)"
+    ring: R1
+    owner: Compliance
+    assignments:
+      include:
+        - Microsoft Purview workload
+      exclude: []
+    dependencies:
+      - PUR-RB-001 (Runbook)
+      - ITIL-001 (Incident template)
+    evidence:
+      - 05-security-compliance-purview/auditing/cases/pur-aud-001-onedrive-file-activity.md
+      # Planned captures (0.2):
+      # - 99-evidence/purview/2026-02-01_audit_filters.png
+      # - 99-evidence/purview/2026-02-01_audit_results.png
+      # - 99-evidence/purview/2026-02-01_audit_record_details.png
+      # - 99-evidence/purview/2026-02-01_audit_export.csv
+
+  - id: PUR-CHK-001
+    type: Baseline checks (Purview Audit)
+    name: "Operational checks"
+    ring: R0
+    owner: Compliance
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 05-security-compliance-purview/auditing/checks.md
+
+  # ----------------------------
+  # Microsoft Defender for Office 365
+  # ----------------------------
+  - id: DEF-RB-001
+    type: Operational runbook (Defender for Office 365)
+    name: "Anti-phish triage (suspected phishing / false positive)"
+    ring: R1
+    owner: Security
+    assignments:
+      include:
+        - Microsoft Defender for Office 365 workload
+      exclude: []
+    dependencies:
+      - ITIL-001 (Incident template)
+      - R0 guardrails
+    evidence:
+      - 06-defender-for-office-365/runbooks/anti-phish-triage.md
+      # - 99-evidence/defender-o365/<YYYY-MM-DD>_quarantine-item.png
+      # - 99-evidence/defender-o365/<YYYY-MM-DD>_explorer-results.png
+      # - 99-evidence/defender-o365/<YYYY-MM-DD>_message-trace.png
+
+
+  - id: DEF-POL-001
+    type: Validated scenario (Defender for Office 365)
+    name: "Anti-phish policy review (fallback evidence)"
+    ring: R1
+    owner: Security
+    assignments:
+      include:
+        - Microsoft Defender for Office 365 workload
+      exclude: []
+    dependencies:
+      - DEF-RB-001 (Runbook)
+      - ITIL-001 (Incident template)
+    evidence:
+      - 06-defender-for-office-365/cases/def-pol-001-anti-phish-policy-review.md
+      # Planned captures (0.2):
+      # - 99-evidence/defender-o365/2026-02-01_quarantine_list.png
+      # - 99-evidence/defender-o365/2026-02-01_quarantine_item_details.png
+      # - 99-evidence/defender-o365/2026-02-01_anti-phish_policy_overview.png
+      # - 99-evidence/defender-o365/2026-02-01_anti-phish_policy_settings.png
+      # - 99-evidence/defender-o365/2026-02-01_anti-phish_policy_assignments.png
+
+  - id: DEF-CHK-001
+    type: Baseline checks (Defender for Office 365)
+    name: "Operational checks"
+    ring: R0
+    owner: Security
+    assignments:
+      include: []
+      exclude: []
+    dependencies: []
+    evidence:
+      - 06-defender-for-office-365/configurations/checks.md
