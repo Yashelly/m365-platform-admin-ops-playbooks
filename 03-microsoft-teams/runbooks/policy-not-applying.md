@@ -23,7 +23,7 @@ Teams policies enforce governance and user experience standards. Misapplied poli
 ## How (Steps)
 
 ### 1) Confirm expected policy and current assignments
-Go to: **Teams admin center** → **Users** → select user → **Policies**
+Go to: **Teams admin center** -> **Users** -> select user -> **Policies**
 - Capture current assignments (Meeting / Messaging / App permission / App setup / Calling).
 
 ### 2) Identify assignment method and precedence
@@ -40,7 +40,7 @@ Ask the user to:
 - wait for propagation if the change is very recent
 
 ### 4) Validate policy configuration itself
-Go to: **Teams admin center** → **Teams** / **Meetings** / **Messaging** → **Policies**
+Go to: **Teams admin center** -> **Teams** / **Meetings** / **Messaging** -> **Policies**
 - Open the relevant policy and verify the setting is correctly configured.
 - If multiple users affected, check whether policy was recently modified.
 
@@ -53,7 +53,7 @@ Ensure the user has a license that enables the required Teams functionality.
 - If policy settings need change: create a **Change** ticket and modify with rollback plan.
 
 ### 7) Validation
-- Confirm assignment in **Teams admin center** → **Users** → **Policies**
+- Confirm assignment in **Teams admin center** -> **Users** -> **Policies**
 - Ask user to validate the exact feature (meeting option, chat feature, app availability).
 
 ## Evidence (sanitized)

@@ -23,13 +23,13 @@ External sharing is a common data leakage vector. The goal is to:
 ## How (Steps)
 
 ### 1) Check tenant-level sharing settings
-Go to: **SharePoint admin center** → **Policies** → **Sharing**
+Go to: **SharePoint admin center** -> **Policies** -> **Sharing**
 - Review SharePoint sharing level and OneDrive sharing level.
 - Review default link type and link expiration (if configured).
 
 ### 2) Identify sites that deviate from baseline (site-level)
-Go to: **SharePoint admin center** → **Sites** → **Active sites**
-- Select a site → open **Policies** / **Sharing** (site panel options may vary by portal)
+Go to: **SharePoint admin center** -> **Sites** -> **Active sites**
+- Select a site -> open **Policies** / **Sharing** (site panel options may vary by portal)
 - Compare site sharing to tenant baseline.
 - Flag outliers (more permissive than baseline).
 
@@ -46,7 +46,7 @@ If not justified:
 - Recommend moving to “Specific people” links or controlled guest access.
 
 ### 5) Audit (incident-driven or periodic review)
-Go to: **Microsoft Purview** → **Audit**
+Go to: **Microsoft Purview** -> **Audit**
 - Search for sharing-related activities (link created, file shared externally).
 - Correlate with site/user/timeframe and document findings.
 
